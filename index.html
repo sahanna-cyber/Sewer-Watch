@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SEWERWATCH | Early Warning</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">◉</div><div><b>SewerWatch</b><small>Early warning</small></div></div>
+    <div class="side-label">PAGES</div>
+    <nav id="nav">
+      <button class="nav-item active" data-page="home">⌂ <span>Home</span></button>
+      <button class="nav-item" data-page="sensors">⌁ <span>Sensors</span></button>
+      <button class="nav-item" data-page="alerts">♧ <span>Alerts</span><i id="alert-count">2</i></button>
+      <button class="nav-item" data-page="report">▥ <span>Report</span></button>
+      <button class="nav-item" data-page="inspection">▣ <span>Inspection</span></button>
+    </nav>
+    <div class="sidebar-bottom">
+      <label class="toggle-row"><span>Simulation mode</span><input id="simulation-toggle" type="checkbox" checked><em></em></label>
+      <small id="mode-note">Sample data. Real readings replace it once the ESP32 is connected.</small>
+      <div class="theme-row"><span>Appearance</span><button id="theme-toggle" class="theme-button">☾ Dark mode</button></div>
+      <div class="system-state"><span class="pulse"></span><span id="connection-label">Demo simulation</span></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div><div class="eyebrow">INFRASTRUCTURE / SEWER NETWORK</div><h1 id="page-title">Home</h1><p id="page-subtitle">Live visibility into sewer-line conditions</p></div>
+      <div class="top-actions"><span class="online-pill"><span class="pulse"></span><span id="online-text">Node online · demo</span></span><button class="button ghost" id="refresh-btn">↻ Refresh</button></div>
+    </header>
+
+    <section class="node-strip">
+      <span class="side-label">NODE</span>
+      <button class="node-chip selected" data-node="M-01"><span class="dot green"></span><b>M-01</b> Canteen kitchen line <small>Normal</small></button>
+      <button class="node-chip" data-node="M-02"><span class="dot green"></span><b>M-02</b> Toilet block line <small>Normal</small></button>
+      <button class="node-chip" data-node="M-03"><span class="dot amber"></span><b>M-03</b> Block B sewage line <small>Moderate</small></button>
+    </section>
+
+    <section id="page-home" class="page active">
+      <div class="hero-status">
+        <div class="hero-copy"><div class="status-kicker"><span class="dot green" id="hero-dot"></span> STATUS NOW</div><h2 id="overall-status">Normal</h2><p id="status-description">Everything on this line is within the prototype limits. No action needed.</p><div class="severity"><span></span><span></span><span></span></div><div class="severity-labels"><small>Normal</small><small>Moderate</small><small>Major</small></div><small id="problem-summary">0 problems · 4 normal · demo data</small></div>
+        <div class="hero-metrics"><div><small>Level</small><b id="hero-level">50 <small>cm</small></b><em>Steady</em></div><div><small>Flow</small><b id="hero-flow">2.0 <small>L/s</small></b><em>At baseline</em></div><div><small>Turbidity</small><b id="hero-turbidity">92 <small>raw</small></b><em>Raw sensor value</em></div><div><small>Methane</small><b id="hero-methane">310 <small>ADC</small></b><em>Uncalibrated</em></div></div>
+      </div>
+      <div class="section-heading"><div><h2>Problem checks</h2><p>Risk indicators from the selected monitoring node</p></div><span class="muted">Tap a page for details</span></div>
+      <div class="problem-grid">
+        <article class="problem-card" id="blockage-card"><div class="card-head"><span class="icon-bubble">▤</span><b>Blockage Risk</b><span class="status-badge" id="blockage-status">Normal</span></div><div class="mini-line"><span style="width:32%"></span></div><strong id="blockage-count">0 of 4 checks flagged</strong><p>Uses water level, flow, turbidity and pipe-distance trends to identify possible blockage patterns.</p><button class="text-link" data-go="sensors">Details ›</button></article>
+        <article class="problem-card"><div class="card-head"><span class="icon-bubble">≋</span><b>Toxic Gas</b><span class="status-badge good">Normal</span></div><div class="meter-label"><span>Methane · MQ-4</span><b id="methane-value">310 ADC</b></div><div class="meter"><span style="width:18%"></span></div><div class="meter-label"><span>Carbon monoxide · MQ-7</span><b id="co-value">8 ADC</b></div><div class="meter"><span style="width:12%"></span></div><p>Raw ADC values only. Gas concentration requires calibration; not a safety alarm.</p><button class="text-link" data-go="sensors">Details ›</button></article>
+        <article class="problem-card"><div class="card-head"><span class="icon-bubble blue">♢</span><b>Overflow Risk</b><span class="status-badge good" id="overflow-status">Normal</span></div><div class="meter-label"><span>Water level</span><b id="overflow-value">50 of 100 cm</b></div><div class="level-track"><span id="level-fill" style="width:50%"></span><i></i><b></b></div><p id="overflow-description">Water level is within the prototype warning threshold.</p><button class="text-link" data-go="sensors">Details ›</button></article>
+        <article class="problem-card"><div class="card-head"><span class="icon-bubble violet">⌁</span><b>Node Health</b><span class="status-badge good">Normal</span></div><div class="health-ring"><b id="battery-value">87%</b></div><p>Battery and sensor reporting status for this node. Missing sensors are marked unavailable, not normal.</p><button class="text-link" data-go="sensors">Details ›</button></article>
+      </div>
+      <div class="lower-grid"><article class="panel chart-panel"><div class="panel-head"><div><h2>Water level history</h2><p>Selected node · simulated trend until hardware is connected</p></div><div class="range-tabs"><button class="selected">1h</button><button>6h</button><button>24h</button></div></div><canvas id="home-chart"></canvas><div class="chart-foot"><span>History preview</span><span>Thresholds are prototype settings</span></div></article><article class="panel inspection-preview"><div class="panel-head"><div><h2>Next inspection</h2><p>Suggested maintenance schedule</p></div></div><div class="inspection-date"><b>18</b><span>NOV</span></div><h3>Routine inspection</h3><p id="inspection-summary">No current critical condition. Confirm during physical inspection.</p><button class="button primary" data-go="inspection">Open inspection</button></article></div>
+    </section>
+
+    <section id="page-sensors" class="page">
+      <div class="section-heading"><div><h2>Sensor telemetry</h2><p>Current values for the selected node</p></div><span class="muted">Prototype values · calibration pending</span></div>
+      <div class="sensor-grid" id="sensor-grid"></div>
+      <article class="panel reading-checks"><h2>Reading checks</h2><p>Each connected sensor should be checked for valid range, stuck values and freshness.</p><div class="check-list"><span>✓ Inside configured input range</span><b>Demo check</b><span>✓ Reading changes over time</span><b>Demo check</b><span>✓ Latest reading timestamp</span><b>Demo check</b></div></article>
+    </section>
+
+    <section id="page-alerts" class="page">
+      <div class="section-heading"><div><h2>Alerts & events</h2><p>Warnings and notable changes for all monitoring nodes</p></div><button class="button ghost" id="clear-alerts">Mark viewed</button></div>
+      <div id="alerts-list" class="stack-list"></div>
+    </section>
+
+    <section id="page-report" class="page">
+      <div class="section-heading"><div><h2>Reports & analytics</h2><p>Review trends and export the currently selected node's sample report</p></div><button class="button primary" id="download-report">↓ Download CSV</button></div>
+      <div class="report-stats" id="report-stats"></div>
+      <article class="panel"><div class="panel-head"><div><h2>Water level trend</h2><p>Recent sample history</p></div></div><canvas id="report-chart"></canvas></article>
+      <p class="notice">Note: CSV contains the values currently shown by the prototype. Do not treat simulated readings as field measurements.</p>
+    </section>
+
+    <section id="page-inspection" class="page">
+      <div class="section-heading"><div><h2>Inspection & maintenance</h2><p>Record physical checks and track follow-up actions</p></div><button class="button primary" id="add-inspection">＋ Add inspection</button></div>
+      <div class="inspection-layout"><article class="panel"><h2>Inspection checklist</h2><div id="inspection-checklist"></div></article><article class="panel"><h2>Inspection history</h2><div id="inspection-history" class="stack-list"></div></article></div>
+    </section>
+    <footer>SEWERWATCH prototype v2.0 · Demo readings are illustrative only · Not a certified sewer or gas safety instrument</footer>
+  </main>
+</div>
+<script src="/js/dashboard.js"></script>
+</body></html>
