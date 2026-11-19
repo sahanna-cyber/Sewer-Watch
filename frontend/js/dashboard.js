@@ -167,22 +167,6 @@ simulation = false;
 $("#simulation-toggle").checked = false;
 $("#mode-note").textContent = "Live mode. Waiting for ESP32 telemetry.";
 $("#connection-label").textContent = "Waiting for ESP32";
-const originalRenderSensors = renderSensors;
-renderSensors = function () {
-  originalRenderSensors();
-  const n = current();
-  const grid = $("#sensor-grid");
-  const extra = [
-    ["DHT22 humidity", n.humidity, "%", "Relative humidity"],
-    ["Ultrasonic obstruction distance", n.particle, "cm", "Sensor-to-obstruction distance"]
-  ];
-  extra.forEach(item => {
-    const card = document.createElement("article");
-    card.className = "sensor-card";
-    card.innerHTML = '<div class="card-head"><h3>'+item[0]+'</h3><span class="status-badge '+(item[1] == null ? 'warn' : 'good')+'">'+(item[1] == null ? 'No data' : 'Live')+'</span></div><div class="sensor-value">'+(item[1] == null ? '—' : Number(item[1]).toFixed(1))+' <small>'+item[2]+'</small></div><p>'+item[3]+'</p><div class="sensor-foot"><span>ESP32 telemetry</span><span>Node '+selectedNode+'</span></div>';
-    grid.appendChild(card);
-  });
-};
 const originalFetchLatest = fetchLatest;
 fetchLatest = async function () {
   try {
