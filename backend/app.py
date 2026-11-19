@@ -50,7 +50,7 @@ def telemetry():
         return jsonify({"error":"Missing required fields", "fields":missing}), 400
     try:
         clean = {"node_id":node_id}
-        numeric = REQUIRED + ["pipe_distance_m","flow_lps","temperature_c","battery_pct"]
+        numeric = REQUIRED + ["pipe_distance_m", "battery_pct"]
         for key in numeric:
             value = data.get(key)
             clean[key] = None if value is None else float(value)
