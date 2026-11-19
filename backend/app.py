@@ -11,8 +11,16 @@ CORS(app)
 init_db()
 
 VALID_NODES = {"M-01", "M-02", "M-03"}
-REQUIRED = ["water_level_cm", "turbidity_raw", "methane_raw", "co_raw"]
-
+REQUIRED = [
+    "water_level_cm",
+    "water_level_2_cm",
+    "turbidity_raw",
+    "methane_raw",
+    "co_raw",
+    "temperature_c",
+    "humidity_pct",
+    "flow_lps"
+]
 @app.get("/")
 def home():
     return send_from_directory(FRONTEND_DIR, "index.html")
