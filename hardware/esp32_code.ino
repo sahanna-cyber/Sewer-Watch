@@ -3,9 +3,9 @@
 
 // Replace with your Wi-Fi and laptop IP address.
 // Use the same network for ESP32 and laptop.
-const char* WIFI_NAME = "YOUR_WIFI_NAME";
-const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-const char* SERVER_URL = "http://YOUR_LAPTOP_IP:5000/api/telemetry";
+const char* WIFI_NAME = "Sahanna's F54";
+const char* WIFI_PASSWORD = "Attackontitan";
+const char* SERVER_URL = "https://sewer-watch.onrender.com/api/telemetry";
 const char* NODE_ID = "M-01"; // Set M-01, M-02 or M-03 for each physical node.
 
 const int TRIG_PIN = 5;
