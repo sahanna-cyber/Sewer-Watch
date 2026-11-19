@@ -1,3 +1,4 @@
+
 import sqlite3
 from pathlib import Path
 from datetime import datetime, timezone
@@ -20,6 +21,7 @@ def init_db():
                 timestamp TEXT NOT NULL,
                 water_level_cm REAL,
                 water_level_2_cm REAL,
+                particle_distance_cm REAL,
                 pipe_distance_m REAL,
                 flow_lps REAL,
                 turbidity_raw REAL,
@@ -31,25 +33,25 @@ def init_db():
             )
         """)
 
-        # Safely add new columns to an existing database
         columns = {
             row["name"]
             for row in db.execute("PRAGMA table_info(readings)")
         }
 
-        if "water_level_2_cm" not in columns:
-            db.execute(
-                "ALTER TABLE readings ADD COLUMN water_level_2_cm REAL"
-            )
+        new_columns = {
+            "water_level_2_cm": "REAL",
+            "particle_distance_cm": "REAL",
+            "humidity_pct": "REAL"
+        }
 
-        if "humidity_pct" not in columns:
-            db.execute(
-                "ALTER TABLE readings ADD COLUMN humidity_pct REAL"
-            )
+        for name, data_type in new_columns.items():
+            if name not in columns:
+                db.execute(
+                    f"ALTER TABLE readings ADD COLUMN {name} {data_type}"
+                )
 
         db.execute("""
-            CREATE INDEX IF NOT EXISTS
-            idx_readings_node_time
+            CREATE INDEX IF NOT EXISTS idx_readings_node_time
             ON readings(node_id, timestamp)
         """)
 
@@ -62,16 +64,17 @@ def insert_reading(data):
             INSERT INTO readings (
                 node_id, timestamp,
                 water_level_cm, water_level_2_cm,
-                pipe_distance_m, flow_lps,
-                turbidity_raw, methane_raw, co_raw,
-                temperature_c, humidity_pct, battery_pct
+                particle_distance_cm, pipe_distance_m,
+                flow_lps, turbidity_raw, methane_raw,
+                co_raw, temperature_c, humidity_pct, battery_pct
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             data["node_id"],
             now,
             data.get("water_level_cm"),
             data.get("water_level_2_cm"),
+            data.get("particle_distance_cm"),
             data.get("pipe_distance_m"),
             data.get("flow_lps"),
             data.get("turbidity_raw"),
