@@ -6,11 +6,15 @@
 const $ = s => document.querySelector(s);
 const $$ = s => [...document.querySelectorAll(s)];
 
+
 const nodes = {
-  "M-01": { name: "Canteen kitchen line", level: 50, pipe: 4.8, flow: 2.0, turbidity: 92, methane: 310, co: 8, temp: 28.4, humidity: 65, particle: 18, battery: 91 },
-  "M-02": { name: "Toilet block line", level: 44, pipe: 5.2, flow: 1.8, turbidity: 105, methane: 280, co: 7, temp: 29.1, humidity: 68, particle: 21, battery: 94 },
-  "M-03": { name: "Block B sewage line", level: 62, pipe: 4.5, flow: 1.2, turbidity: 138, methane: 320, co: 9, temp: 28.4, humidity: 63, particle: 16, battery: 87 }
+  "M-01": { name: "Canteen Wastewater Line", level: 50, pipe: 4.8, flow: 2.0, turbidity: 92, methane: 310, co: 8, temp: 28.4, humidity: 65, particle: 18, battery: 91 },
+
+  "M-02": { name: "School Sewage Network", level: 44, pipe: 5.2, flow: 1.8, turbidity: 105, methane: 280, co: 7, temp: 29.1, humidity: 68, particle: 21, battery: 94 },
+
+  "M-03": { name: "Hospital Wastewater Line", level: 62, pipe: 4.5, flow: 1.2, turbidity: 138, methane: 320, co: 9, temp: 28.4, humidity: 63, particle: 16, battery: 87 }
 };
+
 
 let selectedNode = "M-01", simulation = true, homeChart, reportChart;
 
